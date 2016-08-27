@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Copy Pasta</title>
+        <link rel="stylesheet" href="main.css" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    </head>
+    <body>
+        <div id="copypasta">
+            <div class="signin" v-bind:class="{ 'signin--hidden' : isLoggedIn }">
+                <div>
+                    <p class="error">{{form.error.message}}</p>
+                    <p class="error">{{form.error.code}}</p>
+                </div>
+                <div><label>Username<input type="text" v-model="form.username" /></label></div>
+                <div><label>Password<input type="text" v-model="form.password" /></label></div>
+                <!-- <div class="g-recaptcha" data-sitekey="6Lc8oygTAAAAAMs76ruI5Paeuq5PRpcH4_rnepo0"></div> -->
+                <div>
+                    <button class="btn" v-on:click="handleLogin">Login/Register</button>
+                </div>
+            </div>
+
+            <textarea v-model="binText" v-on:keyup="sendData" class="bin" v-bind:class="{'bin--hidden' : !isLoggedIn}"></textarea>
+            <div class="preload-overlay" v-bind:class="{'preload-overlay--hidden' : loaded}"></div>
+
+            <button class="btn logout " v-bind:class="{'btn--hidden' : !isLoggedIn}" v-on:click="logout">Logout</button>
+        </div>
+
+
+        <script src="vendor/firebase.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
+        <script src="handleLogin.js"></script>
+        <script src="sendData.js"></script>
+        <script src="secrets.js"></script>
+        <script>
+            var provider = new firebase.auth.GoogleAuthProvider();
+            provider.addScope('https://www.googleapis.com/auth/plus.login');
+
+            var config = {
+                apiKey: apiKey,
+                authDomain: "copypasta-2d222.firebaseapp.com",
+                databaseURL: "https://copypasta-2d222.firebaseio.com",
+                storageBucket: "",
+            };
+
+            var vm = new Vue({
+                el: '#copypasta',
+                data: {
+                    form: {
+                        error: { message: '', code: '' },
+                        username: localStorage.getItem('username'),
+                        password: localStorage.getItem('password')
+                    },
+                    f_user: {},
+                    isLoggedIn: false,
+                    loaded: false,
+                    binText: ''
+                },
+                compiled: function() {
+                    firebase.initializeApp(config);
+                },
+                attached: function() {
+                    login.call(this);
+                },
+                methods: {
+                    handleLogin: login,
+                    sendData: sendData,
+                    logout: logout
+                }
+            });
+        </script>
+    </body>
+</html>

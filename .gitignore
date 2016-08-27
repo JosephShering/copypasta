@@ -1,0 +1,5 @@
+copypasta-*
+.DS_STORE
+copypasta.zip
+secrets.js
+node_modules
